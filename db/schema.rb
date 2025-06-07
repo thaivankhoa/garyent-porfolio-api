@@ -10,9 +10,41 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_07_081150) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_07_103926) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "coins", force: :cascade do |t|
+    t.string "coingecko_id"
+    t.string "symbol"
+    t.string "name"
+    t.string "image"
+    t.float "current_price"
+    t.float "market_cap"
+    t.float "market_cap_rank"
+    t.float "total_volume"
+    t.float "high_24h"
+    t.float "low_24h"
+    t.float "price_change_24h"
+    t.float "price_change_percentage_24h"
+    t.float "market_cap_change_24h"
+    t.float "market_cap_change_percentage_24h"
+    t.float "circulating_supply"
+    t.float "total_supply"
+    t.float "max_supply"
+    t.float "ath"
+    t.float "ath_change_percentage"
+    t.string "ath_date"
+    t.float "atl"
+    t.float "atl_change_percentage"
+    t.string "atl_date"
+    t.string "last_updated"
+    t.float "price_change_percentage_1h_in_currency"
+    t.float "price_change_percentage_24h_in_currency"
+    t.float "price_change_percentage_7d_in_currency"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "provider", default: "email", null: false

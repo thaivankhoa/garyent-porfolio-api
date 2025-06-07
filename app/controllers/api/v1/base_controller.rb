@@ -1,9 +1,6 @@
 module Api
   module V1
-    class BaseController < ApplicationController
-      include DeviseTokenAuth::Concerns::SetUserByToken
-      before_action :authenticate_user!
-      
+    class BaseController < ActionController::API
       protected
       
       def render_error(message, status = :unprocessable_entity)
