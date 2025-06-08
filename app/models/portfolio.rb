@@ -1,8 +1,6 @@
 class Portfolio < ApplicationRecord
   belongs_to :user
-	has_many :transactions, dependent: :destroy
 	has_many :portfolio_coins, dependent: :destroy
-	has_many :coins, through: :portfolio_coins
 
   validates :name, presence: true
 
@@ -14,13 +12,22 @@ class Portfolio < ApplicationRecord
     portfolio_coins.sum(&:total_invested)
   end
 
-  def profit_loss
-    total_value - total_invested
+  def gain_or_loss
+    difference = total_value - total_invested
+    {
+      amount: difference.abs.round(2),
+      is_gain: difference >= 0,
+      percentage: calculate_gain_loss_percentage(difference)
+    }
   end
 
-  def profit_loss_percentage
+  private
+
+  def calculate_gain_loss_percentage(difference)
     return 0 if total_invested.zero?
-    (profit_loss / total_invested) * 100
+    
+    percentage = (difference / total_invested * 100).round(2)
+    percentage.abs
   end
 
   def coins_distribution
@@ -39,11 +46,11 @@ class Portfolio < ApplicationRecord
   end
 
   def best_performing_coin
-    portfolio_coins.max_by(&:profit_loss_percentage)
+    portfolio_coins.max_by { |pc| pc.gain_or_loss[:percentage] }
   end
 
   def worst_performing_coin
-    portfolio_coins.min_by(&:profit_loss_percentage)
+    portfolio_coins.min_by { |pc| pc.gain_or_loss[:percentage] }
   end
 
   def performance_data(timeframe)

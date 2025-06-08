@@ -20,15 +20,24 @@ class PortfolioCoin < ApplicationRecord
   end
 
   def current_value
-    total_quantity * coin.current_price
+    quantity * coin.current_price
   end
 
-  def profit_loss
-    current_value - total_invested
+  def gain_or_loss
+    difference = current_value - total_invested
+    {
+      amount: difference.abs.round(2),
+      is_gain: difference >= 0,
+      percentage: calculate_gain_loss_percentage(difference)
+    }
   end
 
-  def profit_loss_percentage
+  private
+
+  def calculate_gain_loss_percentage(difference)
     return 0 if total_invested.zero?
-    (profit_loss / total_invested) * 100
+    
+    percentage = (difference / total_invested * 100).round(2)
+    percentage.abs
   end
 end

@@ -18,7 +18,7 @@ module Api
         if @portfolio.save
           render json: @portfolio, serializer: PortfolioSerializer, status: :created
         else
-          render_error(@portfolio.errors.full_messages.join(", "))
+          render json: @portfolio.errors, status: :unprocessable_entity
         end
       end
 
@@ -26,7 +26,7 @@ module Api
         if @portfolio.update(portfolio_params)
           render json: @portfolio, serializer: PortfolioSerializer
         else
-          render_error(@portfolio.errors.full_messages.join(", "))
+          render json: @portfolio.errors, status: :unprocessable_entity
         end
       end
 
@@ -42,8 +42,6 @@ module Api
             name: portfolio.name,
             total_value: portfolio.total_value,
             total_invested: portfolio.total_invested,
-            profit_loss: portfolio.profit_loss,
-            profit_loss_percentage: portfolio.profit_loss_percentage,
             coins_count: portfolio.portfolio_coins.count
           }
         end
@@ -55,8 +53,6 @@ module Api
         stats = {
           total_value: @portfolio.total_value,
           total_invested: @portfolio.total_invested,
-          profit_loss: @portfolio.profit_loss,
-          profit_loss_percentage: @portfolio.profit_loss_percentage,
           coins_distribution: @portfolio.coins_distribution,
           best_performing_coin: @portfolio.best_performing_coin,
           worst_performing_coin: @portfolio.worst_performing_coin

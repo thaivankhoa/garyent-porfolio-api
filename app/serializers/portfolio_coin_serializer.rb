@@ -1,35 +1,26 @@
 class PortfolioCoinSerializer < ActiveModel::Serializer
-  attributes  :id, 
-              :total_quantity,
-              :average_buy_price,
-              :current_value, 
-              :total_invested,
-              :profit_loss,
-              :profit_loss_percentage
+  attributes :id,
+    :portfolio_id,
+    :coin_id,
+    :quantity,
+    :current_value,
+    :total_invested,
+    :gain_or_loss,
+    :created_at,
+    :updated_at
 
+  belongs_to :portfolio
   belongs_to :coin
 
-  def total_quantity
-    object.total_quantity
-  end
-
-  def average_buy_price
-    object.average_buy_price
-  end
-
   def current_value
-    object.current_value
+    object.current_value.round(2)
   end
 
   def total_invested
-    object.total_invested
+    object.total_invested.round(2)
   end
 
-  def profit_loss
-    object.profit_loss
-  end
-
-  def profit_loss_percentage
-    object.profit_loss_percentage
+  def gain_or_loss
+    object.gain_or_loss
   end
 end 

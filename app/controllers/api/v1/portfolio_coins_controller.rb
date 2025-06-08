@@ -33,8 +33,6 @@ module Api
         stats = {
           total_invested: @portfolio_coin.total_invested,
           current_value: @portfolio_coin.current_value,
-          profit_loss: @portfolio_coin.profit_loss,
-          profit_loss_percentage: @portfolio_coin.profit_loss_percentage,
           average_buy_price: @portfolio_coin.average_buy_price,
           total_quantity: @portfolio_coin.total_quantity
         }
