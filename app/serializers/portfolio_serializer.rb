@@ -8,7 +8,6 @@ class PortfolioSerializer < ActiveModel::Serializer
               :created_at,
               :updated_at
 
-  belongs_to :user
   has_many :portfolio_coins
 
   def gain_or_loss

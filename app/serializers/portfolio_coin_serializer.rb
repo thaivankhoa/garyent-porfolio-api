@@ -1,26 +1,23 @@
 class PortfolioCoinSerializer < ActiveModel::Serializer
-  attributes :id,
-    :portfolio_id,
-    :coin_id,
-    :quantity,
-    :current_value,
-    :total_invested,
-    :gain_or_loss,
-    :created_at,
-    :updated_at
+  attributes  :id,
+              :portfolio_id,
+              :coin_id,
+              :total_quantity,
+              :gain_or_loss,
+              :coin_data
 
-  belongs_to :portfolio
-  belongs_to :coin
+  def coin_data
+    coin = object.coin
 
-  def current_value
-    object.current_value.round(2)
+    {
+      name: coin.name,
+      symbol: coin.symbol,
+      current_price: coin.current_price,
+      market_cap: coin.market_cap,
+      price_change_percentage_1h_in_currency: coin.price_change_percentage_1h_in_currency,
+      price_change_percentage_24h_in_currency: coin.price_change_percentage_24h_in_currency,
+      price_change_percentage_7d_in_currency: coin.price_change_percentage_7d_in_currency
+
+    }
   end
-
-  def total_invested
-    object.total_invested.round(2)
-  end
-
-  def gain_or_loss
-    object.gain_or_loss
-  end
-end 
+end

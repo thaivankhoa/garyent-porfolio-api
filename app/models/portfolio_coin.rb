@@ -20,7 +20,7 @@ class PortfolioCoin < ApplicationRecord
   end
 
   def current_value
-    quantity * coin.current_price
+    average_buy_price * total_quantity
   end
 
   def gain_or_loss

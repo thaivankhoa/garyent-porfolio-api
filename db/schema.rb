@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_07_164307) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_08_075625) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -45,6 +45,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_07_164307) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["coingecko_id"], name: "index_coins_on_coingecko_id"
+    t.index ["name"], name: "index_coins_on_name"
     t.index ["symbol"], name: "index_coins_on_symbol"
   end
 
