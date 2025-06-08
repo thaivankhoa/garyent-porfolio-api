@@ -1,6 +1,6 @@
 module Api
   module V1
-    class CoinsController < Api::V1::BaseController
+    class CoinsController < Api::V1::Auth::BaseController
       def index
         @coins = Coin.order(market_cap_rank: :asc)
                     .page(params[:page] || 1)
