@@ -8,64 +8,26 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-require 'uri'
-require 'net/http'
-require 'json'
+puts "Fetching and syncing coins data from CoinGecko..."
 
-puts "Fetching coins data from CoinGecko..."
+begin
+  market_service = Coingecko::MarketService.new
+  params = {
+		vs_currency: 'usd',
+		page: 1,
+		per_page: 200,
+		price_change_percentage: '1h,24h,7d'
+	}
 
-url = URI("https://api.coingecko.com/api/v3/coins/markets")
-params = {
-  vs_currency: 'usd',
-  page: 1,
-  per_page: 100,
-  price_change_percentage: '1h,24h,7d'
-}
-url.query = URI.encode_www_form(params)
-
-http = Net::HTTP.new(url.host, url.port)
-http.use_ssl = true
-
-request = Net::HTTP::Get.new(url)
-request["accept"] = 'application/json'
-request["x-cg-demo-api-key"] = 'CG-UVDmWrh9sxAB27iGAsfvXY2L'
-
-response = http.request(request)
-coins_data = JSON.parse(response.body)
-
-puts "Creating/Updating coins..."
-
-coins_data.each do |coin_data|
-  coin = Coin.find_or_initialize_by(coingecko_id: coin_data['id'])
-  
-  coin.update!(
-    symbol: coin_data['symbol'],
-    name: coin_data['name'],
-    image: coin_data['image'],
-    current_price: coin_data['current_price'],
-    market_cap: coin_data['market_cap'],
-    market_cap_rank: coin_data['market_cap_rank'],
-    total_volume: coin_data['total_volume'],
-    high_24h: coin_data['high_24h'],
-    low_24h: coin_data['low_24h'],
-    price_change_24h: coin_data['price_change_24h'],
-    market_cap_change_24h: coin_data['market_cap_change_24h'],
-    market_cap_change_percentage_24h: coin_data['market_cap_change_percentage_24h'],
-    circulating_supply: coin_data['circulating_supply'],
-    total_supply: coin_data['total_supply'],
-    max_supply: coin_data['max_supply'],
-    ath: coin_data['ath'],
-    ath_change_percentage: coin_data['max_suath_change_percentagepply'],
-    ath_date: coin_data['ath_date'],
-    atl: coin_data['atl'],
-    atl_change_percentage: coin_data['atl_change_percentage'],
-    atl_date: coin_data['atl_date'],
-    price_change_percentage_1h_in_currency: coin_data['price_change_percentage_1h_in_currency'],
-    price_change_percentage_24h_in_currency: coin_data['price_change_percentage_24h_in_currency'],
-    price_change_percentage_7d_in_currency: coin_data['price_change_percentage_7d_in_currency'],
-    last_updated: coin_data['last_updated']
-  )
+  market_service.sync_markets(params)
+  puts "Finished seeding #{Coin.count} coins!"
+rescue Coingecko::BaseService::RateLimitError => e
+  puts "Rate limit exceeded: #{e.message}"
+rescue Coingecko::BaseService::ApiError => e
+  puts "API error: #{e.message}"
+rescue Coingecko::BaseService::ConnectionError => e
+  puts "Connection error: #{e.message}"
+rescue Coingecko::BaseService::Error => e
+  puts "Unknown error: #{e.message}"
 end
-
-puts "Finished seeding #{Coin.count} coins!"
 
