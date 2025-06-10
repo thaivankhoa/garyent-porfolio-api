@@ -16,8 +16,8 @@ class PortfolioCoinSerializer < ActiveModel::Serializer
       market_cap: coin.market_cap,
       price_change_percentage_1h_in_currency: coin.price_change_percentage_1h_in_currency,
       price_change_percentage_24h_in_currency: coin.price_change_percentage_24h_in_currency,
-      price_change_percentage_7d_in_currency: coin.price_change_percentage_7d_in_currency
-
+      price_change_percentage_7d_in_currency: coin.price_change_percentage_7d_in_currency,
+      image: coin.image
     }
   end
 end

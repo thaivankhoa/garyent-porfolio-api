@@ -16,36 +16,19 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :coins, only: [:index] do
-        # collection do
-        #   get 'markets', to: 'coins#markets'  # Lấy market data của tất cả coins
-        #   get 'trending', to: 'coins#trending'  # Lấy trending coins
-        # end
-      end
+      resources :coins, only: [:index]
 
       resources :portfolios do
-        collection do
-          get 'summary', to: 'portfolios#summary'  # Tổng quan về tất cả portfolios
-        end
-        
-        member do
-          get 'statistics', to: 'portfolios#statistics'  # Thống kê chi tiết của portfolio
-          get 'performance', to: 'portfolios#performance'  # Hiệu suất theo thời gian
-        end
 
-        resources :coins, controller: 'portfolio_coins', only: [:index, :create, :destroy] do
+        resources :coins, controller: 'portfolio_coins', only: [:create, :destroy] do
           member do
-            get 'transactions', to: 'portfolio_coins#transactions'  # Lịch sử giao dịch của coin
-            get 'statistics', to: 'portfolio_coins#statistics'  # Thống kê của coin trong portfolio
+            get 'statistics', to: 'portfolio_coins#statistics'
+            get 'transactions', to: 'portfolio_coins#transactions'
+            post 'add_transaction', to: 'portfolio_coins#add_transactions'
           end
         end
 
-        resources :transactions, only: [:index, :create, :update, :destroy] do
-          collection do
-            get 'history', to: 'transactions#history'  # Lịch sử giao dịch theo thời gian
-            get 'summary', to: 'transactions#summary'  # Tổng hợp giao dịch
-          end
-        end
+        resources :transactions, only: [:update, :destroy]
       end
     end
   end
