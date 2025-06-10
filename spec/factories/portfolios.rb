@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :portfolio do
-    name { Faker::Finance.wallet_name }
+    name { Faker::Finance.stock_market }
+    description { Faker::Lorem.sentence }
     user
 
     trait :with_coins do

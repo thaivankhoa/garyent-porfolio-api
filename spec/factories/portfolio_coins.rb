@@ -2,6 +2,8 @@ FactoryBot.define do
   factory :portfolio_coin do
     portfolio
     coin
+    quantity { Faker::Number.decimal(l_digits: 2, r_digits: 8) }
+    average_buy_price { Faker::Number.decimal(l_digits: 4, r_digits: 2) }
 
     trait :with_transactions do
       after(:create) do |portfolio_coin|

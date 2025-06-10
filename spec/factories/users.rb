@@ -3,6 +3,7 @@ FactoryBot.define do
     email { Faker::Internet.email }
     password { 'password123' }
     password_confirmation { 'password123' }
+    name { Faker::Name.name }
     confirmed_at { Time.current }
 
     trait :with_portfolio do

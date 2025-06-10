@@ -1,9 +1,10 @@
 FactoryBot.define do
   factory :transaction do
     portfolio_coin
-    quantity { Faker::Number.decimal(l_digits: 2, r_digits: 6) }
+    transaction_type { %w[buy sell].sample }
+    quantity { Faker::Number.decimal(l_digits: 2, r_digits: 8) }
     price { Faker::Number.decimal(l_digits: 4, r_digits: 2) }
-    transaction_date { Faker::Time.backward(days: 14) }
+    executed_at { Time.current }
     
     trait :buy do
       transaction_type { 'buy' }
@@ -21,11 +22,11 @@ FactoryBot.define do
     end
 
     trait :recent do
-      transaction_date { Time.current - 1.hour }
+      executed_at { Time.current - 1.hour }
     end
 
     trait :old do
-      transaction_date { Time.current - 1.month }
+      executed_at { Time.current - 1.month }
     end
   end
 end 
