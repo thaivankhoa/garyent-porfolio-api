@@ -17,6 +17,19 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :coins, only: [:index]
+
+      resources :portfolios do
+
+        resources :coins, controller: 'portfolio_coins', only: [:create, :destroy] do
+          member do
+            get 'statistics', to: 'portfolio_coins#statistics'
+            get 'transactions', to: 'portfolio_coins#transactions'
+            post 'add_transaction', to: 'portfolio_coins#add_transactions'
+          end
+        end
+
+        resources :transactions, only: [:update, :destroy]
+      end
     end
   end
 end
