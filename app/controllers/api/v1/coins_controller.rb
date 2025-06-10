@@ -5,8 +5,10 @@ module Api
 
       def index
         @coins = CoinQuery.new(Coin.all, search_params).call
+				latest_updated_at = Coin.maximum(:updated_at)
         render json: {
           coins: ActiveModel::Serializer::CollectionSerializer.new(@coins, serializer: CoinSerializer),
+					latest_updated_at: latest_updated_at,
           meta: {
             current_page: @coins.current_page,
             total_pages: @coins.total_pages,
