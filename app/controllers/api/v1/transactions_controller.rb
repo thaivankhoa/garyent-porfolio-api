@@ -2,7 +2,7 @@ module Api
   module V1
     class TransactionsController < Api::V1::Auth::BaseController
       before_action :set_portfolio
-      before_action :set_transaction, only: [:update, :destroy]
+      before_action :set_transaction, only: %i[update destroy]
 
       def update
         if @transaction.update(transaction_params)
@@ -25,8 +25,8 @@ module Api
 
       def set_transaction
         @transaction = Transaction.joins(portfolio_coin: :portfolio)
-                                .where(portfolio_coins: { portfolio_id: @portfolio.id })
-                                .find(params[:id])
+                                  .where(portfolio_coins: { portfolio_id: @portfolio.id })
+                                  .find(params[:id])
       end
 
       def transaction_params
@@ -34,4 +34,4 @@ module Api
       end
     end
   end
-end 
+end

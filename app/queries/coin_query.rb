@@ -21,7 +21,7 @@ class CoinQuery < BaseQuery
 
     search_term = "%#{params[:search].downcase}%"
     scoped.where(
-      "LOWER(coingecko_id) LIKE :term OR LOWER(name) LIKE :term OR LOWER(symbol) LIKE :term",
+      'LOWER(coingecko_id) LIKE :term OR LOWER(name) LIKE :term OR LOWER(symbol) LIKE :term',
       term: search_term
     )
   end
@@ -29,7 +29,7 @@ class CoinQuery < BaseQuery
   def apply_order(scoped)
     order_column = order_params[:column] || 'market_cap_rank'
     order_direction = order_params[:direction] || 'asc'
-    
+
     scoped.order("#{order_column} #{order_direction}")
   end
 

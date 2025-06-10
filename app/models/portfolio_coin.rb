@@ -27,7 +27,7 @@ class PortfolioCoin < ApplicationRecord
     buy_transactions = transactions.select(&:buy?)
     total_buy_quantity = buy_transactions.sum(&:quantity)
     return 0 if total_buy_quantity.zero?
-    
+
     total_buy_value = buy_transactions.sum { |t| t.quantity * t.price }
     total_buy_value / total_buy_quantity
   end
@@ -40,7 +40,7 @@ class PortfolioCoin < ApplicationRecord
     current_val = current_value
     invested = total_invested
     difference = current_val - invested
-    
+
     {
       amount: difference.abs.round(2),
       is_gain: difference >= 0,
@@ -52,7 +52,7 @@ class PortfolioCoin < ApplicationRecord
 
   def calculate_gain_loss_percentage(difference, invested)
     return 0 if invested.zero?
-    
+
     percentage = (difference / invested * 100).round(2)
     percentage.abs
   end

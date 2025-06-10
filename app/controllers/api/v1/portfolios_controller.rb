@@ -1,10 +1,10 @@
 module Api
   module V1
     class PortfoliosController < Api::V1::Auth::BaseController
-      before_action :set_portfolio, only: [:show, :update, :destroy]
+      before_action :set_portfolio, only: %i[show update destroy]
 
       def index
-        @portfolios = current_user.portfolios.includes(portfolio_coins: [:coin, :transactions])
+        @portfolios = current_user.portfolios.includes(portfolio_coins: %i[coin transactions])
         render json: @portfolios, each_serializer: PortfolioSerializer
       end
 
@@ -40,9 +40,9 @@ module Api
       def set_portfolio
         @portfolio =
           current_user
-            .portfolios
-            .includes(portfolio_coins: [:coin, :transactions])
-            .find(params[:id])
+          .portfolios
+          .includes(portfolio_coins: %i[coin transactions])
+          .find(params[:id])
       end
 
       def portfolio_params
@@ -50,4 +50,4 @@ module Api
       end
     end
   end
-end 
+end

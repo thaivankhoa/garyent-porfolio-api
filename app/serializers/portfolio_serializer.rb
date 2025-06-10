@@ -10,9 +10,7 @@ class PortfolioSerializer < ActiveModel::Serializer
 
   has_many :portfolio_coins
 
-  def gain_or_loss
-    object.gain_or_loss
-  end
+  delegate :gain_or_loss, to: :object
 
   def total_value
     object.total_value.round(2)
@@ -21,4 +19,4 @@ class PortfolioSerializer < ActiveModel::Serializer
   def total_invested
     object.total_invested.round(2)
   end
-end 
+end

@@ -1,6 +1,8 @@
 module Api
   module V1
     class PortfolioCoinsController < Api::V1::Auth::BaseController
+      include PaginationConcern
+
       before_action :set_portfolio
       before_action :set_portfolio_coin, except: [:create]
 
@@ -42,15 +44,7 @@ module Api
           search_transaction_params
         ).call
 
-        render json: {
-          transactions: ActiveModel::Serializer::CollectionSerializer.new(@transactions, serializer: TransactionSerializer),
-          meta: {
-            current_page: @transactions.current_page,
-            total_pages: @transactions.total_pages,
-            total_count: @transactions.total_count,
-            per_page: @transactions.limit_value
-          }
-        }
+        render json: paginated_response(@transactions, TransactionSerializer)
       end
 
       def add_transactions
@@ -106,10 +100,10 @@ module Api
       def search_transaction_params
         params.permit(
           :portfolio_id, :id, :page, :per_page,
-          filter: [:transaction_type, :start_date, :end_date],
-          order: [:column, :direction]
+          filter: %i[transaction_type start_date end_date],
+          order: %i[column direction]
         )
       end
     end
   end
-end 
+end

@@ -67,4 +67,4 @@ module Coingecko
       end
     end
   end
-end 
+end

@@ -1,6 +1,6 @@
 class UpdateCoinsJob
   include Sidekiq::Job
-  
+
   sidekiq_options queue: :default, retry: 3
 
   def perform
@@ -15,4 +15,4 @@ class UpdateCoinsJob
       raise e # Re-raise to trigger Sidekiq retry mechanism
     end
   end
-end 
+end
