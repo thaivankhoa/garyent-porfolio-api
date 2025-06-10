@@ -39,7 +39,7 @@ module Api
       def transactions
         @transactions = TransactionQuery.new(
           @portfolio_coin.transactions,
-          transaction_params
+          search_transaction_params
         ).call
 
         render json: {
@@ -54,7 +54,7 @@ module Api
       end
 
       def add_transactions
-        @transaction = @portfolio_coin.transactions.build(transaction_params)
+        @transaction = @portfolio_coin.transactions.build(create_transaction_params)
 
         if @transaction.save
           render json: @transaction, status: :created
@@ -66,7 +66,7 @@ module Api
       def update_transactions
         @transaction = @portfolio_coin.transactions.find(params[:transaction_id])
 
-        if @transaction.update(transaction_params)
+        if @transaction.update(create_transaction_params)
           render json: @transaction
         else
           render json: { errors: @transaction.errors.full_messages }, status: :unprocessable_entity
@@ -93,12 +93,21 @@ module Api
         params.require(:portfolio_coin).permit(:coin_id)
       end
 
-      def transaction_params
+      def create_transaction_params
+        params.require(:transaction).permit(
+          :transaction_type,
+          :quantity,
+          :price,
+          :note,
+          :transaction_date
+        )
+      end
+
+      def search_transaction_params
         params.permit(
-          :page, :per_page,
+          :portfolio_id, :id, :page, :per_page,
           filter: [:transaction_type, :start_date, :end_date],
-          order: [:column, :direction],
-          transaction: [:transaction_type, :quantity, :price, :note, :transaction_date]
+          order: [:column, :direction]
         )
       end
     end

@@ -4,7 +4,7 @@ module Api
       before_action :set_portfolio, only: [:show, :update, :destroy]
 
       def index
-        @portfolios = current_user.portfolios.includes(portfolio_coins: :coin)
+        @portfolios = current_user.portfolios.includes(portfolio_coins: [:coin, :transactions])
         render json: @portfolios, each_serializer: PortfolioSerializer
       end
 
@@ -38,7 +38,11 @@ module Api
       private
 
       def set_portfolio
-        @portfolio = current_user.portfolios.find(params[:id])
+        @portfolio =
+          current_user
+            .portfolios
+            .includes(portfolio_coins: [:coin, :transactions])
+            .find(params[:id])
       end
 
       def portfolio_params
