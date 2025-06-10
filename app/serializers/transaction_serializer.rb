@@ -30,4 +30,4 @@ class TransactionSerializer < ActiveModel::Serializer
       current_price: coin.current_price
     }
   end
-end 
+end

@@ -25,4 +25,4 @@ class CoinSerializer < ActiveModel::Serializer
               :price_change_percentage_24h_in_currency,
               :price_change_percentage_7d_in_currency,
               :last_updated
-end 
+end

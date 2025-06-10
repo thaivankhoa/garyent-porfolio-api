@@ -1,6 +1,8 @@
 module Api
   module V1
     class PortfolioCoinsController < Api::V1::Auth::BaseController
+      include PaginationConcern
+
       before_action :set_portfolio
       before_action :set_portfolio_coin, except: [:create]
 
@@ -37,24 +39,16 @@ module Api
       end
 
       def transactions
-        @transactions = @portfolio_coin.transactions
-                                 .order(created_at: :desc)
-                                 .page(params[:page])
-                                 .per(params[:per_page] || 20)
+        @transactions = TransactionQuery.new(
+          @portfolio_coin.transactions,
+          search_transaction_params
+        ).call
 
-        render json: {
-          transactions: ActiveModel::Serializer::CollectionSerializer.new(@transactions, serializer: TransactionSerializer),
-          meta: {
-            current_page: @transactions.current_page,
-            total_pages: @transactions.total_pages,
-            total_count: @transactions.total_count,
-            per_page: @transactions.limit_value
-          }
-        }
+        render json: paginated_response(@transactions, TransactionSerializer)
       end
 
       def add_transactions
-        @transaction = @portfolio_coin.transactions.build(transaction_params)
+        @transaction = @portfolio_coin.transactions.build(create_transaction_params)
 
         if @transaction.save
           render json: @transaction, status: :created
@@ -66,7 +60,7 @@ module Api
       def update_transactions
         @transaction = @portfolio_coin.transactions.find(params[:transaction_id])
 
-        if @transaction.update(transaction_params)
+        if @transaction.update(create_transaction_params)
           render json: @transaction
         else
           render json: { errors: @transaction.errors.full_messages }, status: :unprocessable_entity
@@ -93,7 +87,7 @@ module Api
         params.require(:portfolio_coin).permit(:coin_id)
       end
 
-      def transaction_params
+      def create_transaction_params
         params.require(:transaction).permit(
           :transaction_type,
           :quantity,
@@ -102,6 +96,14 @@ module Api
           :transaction_date
         )
       end
+
+      def search_transaction_params
+        params.permit(
+          :portfolio_id, :id, :page, :per_page,
+          filter: %i[transaction_type start_date end_date],
+          order: %i[column direction]
+        )
+      end
     end
   end
-end 
+end

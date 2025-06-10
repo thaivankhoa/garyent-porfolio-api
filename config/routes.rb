@@ -1,4 +1,12 @@
+require 'sidekiq/web'
+require 'sidekiq-scheduler/web'
+
 Rails.application.routes.draw do
+  # Enable Sidekiq Web UI
+  if defined?(Sidekiq::Web)
+    mount Sidekiq::Web => '/sidekiq'
+  end
+
   # mount_devise_token_auth_for 'User', at: 'auth'
 
   mount_devise_token_auth_for 'User', at: 'api/v1/auth'

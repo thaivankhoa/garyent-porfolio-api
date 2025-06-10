@@ -1,0 +1,12 @@
+:verbose: false
+:concurrency: 5
+:timeout: 30
+
+:queues:
+  - default
+
+:scheduler:
+  :schedule:
+    update_coins:
+      class: UpdateCoinsJob
+      every: '5m'   # Runs every 5 minutes 

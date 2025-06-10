@@ -1,19 +1,17 @@
 module Api
   module V1
     class CoinsController < Api::V1::Auth::BaseController
+      include PaginationConcern
+
       before_action :authenticate_user!
 
       def index
-        @coins = ::CoinsQuery.new(Coin.all, search_params).call
-        render json: {
-          coins: ActiveModel::Serializer::CollectionSerializer.new(@coins, serializer: CoinSerializer),
-          meta: {
-            current_page: @coins.current_page,
-            total_pages: @coins.total_pages,
-            total_count: @coins.total_count,
-            per_page: @coins.limit_value
-          }
-        }
+        @coins = CoinQuery.new(Coin.all, search_params).call
+        latest_updated_at = Coin.maximum(:updated_at)
+
+        render json: paginated_response(@coins, CoinSerializer).merge(
+          latest_updated_at: latest_updated_at
+        )
       end
 
       def show

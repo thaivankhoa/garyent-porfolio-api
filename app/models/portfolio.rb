@@ -1,6 +1,6 @@
 class Portfolio < ApplicationRecord
   belongs_to :user
-	has_many :portfolio_coins, dependent: :destroy
+  has_many :portfolio_coins, dependent: :destroy
 
   validates :name, presence: true
 
@@ -25,7 +25,7 @@ class Portfolio < ApplicationRecord
 
   def calculate_gain_loss_percentage(difference)
     return 0 if total_invested.zero?
-    
+
     percentage = (difference / total_invested * 100).round(2)
     percentage.abs
   end
@@ -34,7 +34,7 @@ class Portfolio < ApplicationRecord
     total = total_value
     return [] if total.zero?
 
-    portfolio_coins.map do |pc|
+    distribution = portfolio_coins.map do |pc|
       {
         coin_id: pc.coin_id,
         symbol: pc.coin.symbol,
@@ -42,7 +42,8 @@ class Portfolio < ApplicationRecord
         value: pc.current_value,
         percentage: (pc.current_value / total * 100).round(2)
       }
-    end.sort_by { |coin| -coin[:value] }
+    end
+    distribution.sort_by { |coin| -coin[:value] }
   end
 
   def best_performing_coin
@@ -53,7 +54,7 @@ class Portfolio < ApplicationRecord
     portfolio_coins.min_by { |pc| pc.gain_or_loss[:percentage] }
   end
 
-  def performance_data(timeframe)
+  def performance_data(_timeframe)
     {
       labels: [],
       values: []
