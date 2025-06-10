@@ -4,7 +4,7 @@ module Api
       before_action :authenticate_user!
 
       def index
-        @coins = ::CoinsQuery.new(Coin.all, search_params).call
+        @coins = CoinQuery.new(Coin.all, search_params).call
         render json: {
           coins: ActiveModel::Serializer::CollectionSerializer.new(@coins, serializer: CoinSerializer),
           meta: {

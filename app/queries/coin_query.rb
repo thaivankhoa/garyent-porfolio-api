@@ -1,22 +1,23 @@
-class CoinsQuery
+class CoinQuery < BaseQuery
   attr_reader :relation, :params
 
   def initialize(relation = Coin.all, params = {})
+    super
     @relation = relation
     @params = params
   end
 
   def call
     scoped = relation
-    scoped = search_coins(scoped)
-    scoped = order_coins(scoped)
+    scoped = apply_search(scoped)
+    scoped = apply_order(scoped)
     paginate_coins(scoped)
   end
 
-  private
+  protected
 
-  def search_coins(scoped)
-    return scoped if params[:search].blank?
+  def apply_search(scoped)
+    return scoped unless search_present?
 
     search_term = "%#{params[:search].downcase}%"
     scoped.where(
@@ -25,8 +26,11 @@ class CoinsQuery
     )
   end
 
-  def order_coins(scoped)
-    scoped.order(market_cap_rank: :asc)
+  def apply_order(scoped)
+    order_column = order_params[:column] || 'market_cap_rank'
+    order_direction = order_params[:direction] || 'asc'
+    
+    scoped.order("#{order_column} #{order_direction}")
   end
 
   def paginate_coins(scoped)
@@ -34,4 +38,3 @@ class CoinsQuery
           .per(params[:per_page] || 20)
   end
 end
-

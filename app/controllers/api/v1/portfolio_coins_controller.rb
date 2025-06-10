@@ -37,10 +37,10 @@ module Api
       end
 
       def transactions
-        @transactions = @portfolio_coin.transactions
-                                 .order(created_at: :desc)
-                                 .page(params[:page])
-                                 .per(params[:per_page] || 20)
+        @transactions = TransactionQuery.new(
+          @portfolio_coin.transactions,
+          transaction_params
+        ).call
 
         render json: {
           transactions: ActiveModel::Serializer::CollectionSerializer.new(@transactions, serializer: TransactionSerializer),
@@ -94,12 +94,11 @@ module Api
       end
 
       def transaction_params
-        params.require(:transaction).permit(
-          :transaction_type,
-          :quantity,
-          :price,
-          :note,
-          :transaction_date
+        params.permit(
+          :page, :per_page,
+          filter: [:transaction_type, :start_date, :end_date],
+          order: [:column, :direction],
+          transaction: [:transaction_type, :quantity, :price, :note, :transaction_date]
         )
       end
     end
