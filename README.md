@@ -1,54 +1,63 @@
-# README
+# Crypto Portfolio API
 
-# DB Diagram: https://dbdiagram.io/d/Portfolio-649983b102bd1c4a5e131b7b
-# Postman docs: https://documenter.getpostman.com/view/5693366/2sB2x5GXpc
-# High level component: https://tinyurl.com/9v29cj5u
+## Documentation & Diagrams
+- [Database Diagram](https://dbdiagram.io/d/Portfolio-649983b102bd1c4a5e131b7b)
+- [API Documentation](https://documenter.getpostman.com/view/5693366/2sB2x5GXpc)
+- [System Architecture](https://tinyurl.com/9v29cj5u)
 
-SYSTEM DESIGN
-I/ Architecture Overview:
-  1/ High Level Component:
-    - Load Balancer (optional)
-    - API Gateway (Optional)
-    - API server
-    - SQL DB
-    - Redis
-    - 3rd third party API from Coingecko
+## System Design
 
-    * FYI => https://tinyurl.com/9v29cj5u
+### I. Architecture Overview
 
-  2/ Techstack:
-    Monolith Architecture
-    + API server: Ruby on Rails (Ruby 3.1.4, Rails 7.1.3)
-    + SQL Database: Posgresql
-    + Auth: Devise Token Auth
-    + Caching: Redis
-    + Handling background job: Sidekiq
-    + Client side: ReactJS
+#### 1. High Level Components
+- Load Balancer (optional)
+- API Gateway (Optional)
+- API Server
+- SQL Database
+- Redis
+- 3rd Party API (Coingecko)
 
-II/ Database:
-    1/ users
-    2/ coins
-    3/ portfolios
-    4/ portfolio_coins
-    5/ transactions
+[View Architecture Diagram](https://tinyurl.com/9v29cj5u)
 
-    * FYI => https://dbdiagram.io/d/Portfolio-649983b102bd1c4a5e131b7b
+#### 2. Tech Stack
+**Monolith Architecture**
+- API Server: Ruby on Rails (Ruby 3.1.4, Rails 7.1.3)
+- Database: PostgreSQL
+- Authentication: Devise Token Auth
+- Caching: Redis
+- Background Jobs: Sidekiq
+- Frontend: ReactJS
 
-III/ API design:
-    1/ Controller:
-        - Auth Controller
-        - CoinsController
-        - PortfoliosController
-        - PortfolioCoinsController
-        - TransactionsController
-    2/ Model:
-        - User, Coin, Portfolio, PortfolioCoin, Transaction
+### II. Database Structure
+1. Users
+2. Coins
+3. Portfolios
+4. Portfolio Coins
+5. Transactions
 
-    3/ API url
-        - Auth API
-        - Coin API
-        - Portfolio API:
-            + Portfolio Coin API
-            + Transaction API
+[View Database Diagram](https://dbdiagram.io/d/Portfolio-649983b102bd1c4a5e131b7b)
 
-    * FYI => https://documenter.getpostman.com/view/5693366/2sB2x5GXpc
+### III. API Design
+
+#### 1. Controllers
+- Auth Controller
+- Coins Controller
+- Portfolios Controller
+- Portfolio Coins Controller
+- Transactions Controller
+
+#### 2. Models
+- User
+- Coin
+- Portfolio
+- PortfolioCoin
+- Transaction
+
+#### 3. API Endpoints
+- Authentication API
+- Coin API
+- Portfolio API
+  - Portfolio Coin API
+  - Transaction API
+
+[View Full API Documentation](https://documenter.getpostman.com/view/5693366/2sB2x5GXpc)
