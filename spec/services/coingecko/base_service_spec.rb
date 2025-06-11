@@ -1,55 +1,72 @@
-# require 'rails_helper'
+require 'rails_helper'
 
-# RSpec.describe Coingecko::BaseService do
-#   describe '.api_url' do
-#     it 'returns the base API URL' do
-#       expect(described_class.api_url).to eq('https://api.coingecko.com/api/v3')
-#     end
-#   end
+RSpec.describe Coingecko::BaseService do
+  let(:service) { described_class.new }
+  let(:base_url) { 'https://api.coingecko.com' }
+  let(:api_key) { ENV.fetch('COINGECKO_API_KEY', 'test-api-key') }
 
-#   describe '.headers' do
-#     before do
-#       allow(ENV).to receive(:[]).with('COINGECKO_API_KEY').and_return('test-api-key')
-#     end
+  describe '#build_url' do
+    it 'builds URL with path' do
+      url = service.send(:build_url, '/coins/markets')
+      expect(url.to_s).to eq("#{base_url}/coins/markets")
+    end
 
-#     it 'returns headers with API key' do
-#       expect(described_class.headers).to include(
-#         'x-cg-pro-api-key' => 'test-api-key'
-#       )
-#     end
-#   end
+    it 'builds URL with params' do
+      url = service.send(:build_url, '/coins/markets', { vs_currency: 'usd' })
+      expect(url.to_s).to eq("#{base_url}/coins/markets?vs_currency=usd")
+    end
+  end
 
-#   describe '.get' do
-#     let(:endpoint) { '/coins/markets' }
-#     let(:params) { { vs_currency: 'usd' } }
-#     let(:response_body) { [{ id: 'bitcoin' }] }
-#     let(:response) { instance_double(HTTParty::Response, code: 200, parsed_response: response_body) }
+  describe '#build_request' do
+    let(:url) { URI.parse("#{base_url}/coins/markets") }
 
-#     before do
-#       allow(HTTParty).to receive(:get).and_return(response)
-#     end
+    it 'builds request with headers' do
+      request = service.send(:build_request, url)
+      expect(request['accept']).to eq('application/json')
+      expect(request['x-cg-api-key']).to eq(api_key)
+    end
+  end
 
-#     it 'makes a GET request to the API' do
-#       result = described_class.get(endpoint, params)
+  describe '#get' do
+    let(:path) { '/coins/markets' }
+    let(:params) { { vs_currency: 'usd' } }
+    let(:response_body) { [{ id: 'bitcoin' }].to_json }
+    let(:mock_http) { instance_double(Net::HTTP) }
+    let(:mock_response) { instance_double(Net::HTTPResponse, code: '200', body: response_body) }
 
-#       expect(HTTParty).to have_received(:get).with(
-#         "#{described_class.api_url}#{endpoint}",
-#         hash_including(
-#           query: params,
-#           headers: described_class.headers
-#         )
-#       )
-#       expect(result).to eq(response_body)
-#     end
+    before do
+      allow(Net::HTTP).to receive(:new).and_return(mock_http)
+      allow(mock_http).to receive(:use_ssl=)
+      allow(mock_http).to receive(:read_timeout=)
+      allow(mock_http).to receive(:open_timeout=)
+      allow(mock_http).to receive(:request).and_return(mock_response)
+    end
 
-#     context 'when API returns an error' do
-#       let(:response) { instance_double(HTTParty::Response, code: 429, parsed_response: { error: 'Too many requests' }) }
+    it 'makes a GET request and returns parsed JSON' do
+      result = service.send(:get, path, params)
+      expect(result).to eq([{ 'id' => 'bitcoin' }])
+    end
 
-#       it 'raises an error' do
-#         expect {
-#           described_class.get(endpoint, params)
-#         }.to raise_error(Coingecko::BaseService::ApiError, 'API request failed: Too many requests')
-#       end
-#     end
-#   end
-# end 
+    context 'when API returns an error' do
+      let(:mock_response) { instance_double(Net::HTTPResponse, code: '429', body: '{"error": "Rate limit exceeded"}') }
+
+      it 'raises Error for 429' do
+        expect {
+          service.send(:get, path, params)
+        }.to raise_error(Coingecko::BaseService::Error, /Rate limit exceeded/)
+      end
+    end
+
+    context 'when connection fails' do
+      before do
+        allow(mock_http).to receive(:request).and_raise(Net::ReadTimeout)
+      end
+
+      it 'raises ConnectionError' do
+        expect {
+          service.send(:get, path, params)
+        }.to raise_error(Coingecko::BaseService::ConnectionError, /Connection failed/)
+      end
+    end
+  end
+end
