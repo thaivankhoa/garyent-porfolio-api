@@ -1,0 +1,42 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.coingecko.com/api/v3/coins/markets?ids=bitcoin,ethereum&sparkline=true&vs_currency=usd
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      x-cg-pro-api-key:
+      - "<COINGECKO_API_KEY>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 14 Mar 2024 10:00:00 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding
+      Cache-Control:
+      - max-age=30
+      ETag:
+      - W/"d8839eeb89a3b8c82c2f52de6aa1f1b9"
+      X-Request-Id:
+      - 8f9a3b2c-1d4e-4f5a-9b6a-7c8d0e1f2a3b
+    body:
+      encoding: UTF-8
+      string: '[{"id":"bitcoin","symbol":"btc","name":"Bitcoin","current_price":45000.0,"market_cap":850000000000,"market_cap_rank":1,"total_volume":28000000000,"price_change_percentage_24h":2.5,"sparkline_in_7d":{"price":[44000.0,44500.0,45000.0]},"last_updated":"2024-03-14T10:00:00.000Z"},{"id":"ethereum","symbol":"eth","name":"Ethereum","current_price":2000.0,"market_cap":240000000000,"market_cap_rank":2,"total_volume":15000000000,"price_change_percentage_24h":1.8,"sparkline_in_7d":{"price":[1900.0,1950.0,2000.0]},"last_updated":"2024-03-14T10:00:00.000Z"}]'
+    http_version: 
+  recorded_at: Thu, 14 Mar 2024 10:00:00 GMT
+recorded_with: VCR 6.2.0 

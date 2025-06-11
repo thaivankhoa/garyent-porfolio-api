@@ -1,24 +1,54 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+# DB Diagram: https://dbdiagram.io/d/Portfolio-649983b102bd1c4a5e131b7b
+# Postman docs: https://documenter.getpostman.com/view/5693366/2sB2x5GXpc
+# High level component: https://tinyurl.com/9v29cj5u
 
-Things you may want to cover:
+SYSTEM DESIGN
+I/ Architecture Overview:
+  1/ High Level Component:
+    - Load Balancer (optional)
+    - API Gateway (Optional)
+    - API server
+    - SQL DB
+    - Redis
+    - 3rd third party API from Coingecko
 
-* Ruby version
+    * FYI => https://tinyurl.com/9v29cj5u
 
-* System dependencies
+  2/ Techstack:
+    Monolith Architecture
+    + API server: Ruby on Rails (Ruby 3.1.4, Rails 7.1.3)
+    + SQL Database: Posgresql
+    + Auth: Devise Token Auth
+    + Caching: Redis
+    + Handling background job: Sidekiq
+    + Client side: ReactJS
 
-* Configuration
+II/ Database:
+    1/ users
+    2/ coins
+    3/ portfolios
+    4/ portfolio_coins
+    5/ transactions
 
-* Database creation
+    * FYI => https://dbdiagram.io/d/Portfolio-649983b102bd1c4a5e131b7b
 
-* Database initialization
+III/ API design:
+    1/ Controller:
+        - Auth Controller
+        - CoinsController
+        - PortfoliosController
+        - PortfolioCoinsController
+        - TransactionsController
+    2/ Model:
+        - User, Coin, Portfolio, PortfolioCoin, Transaction
 
-* How to run the test suite
+    3/ API url
+        - Auth API
+        - Coin API
+        - Portfolio API:
+            + Portfolio Coin API
+            + Transaction API
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+    * FYI => https://documenter.getpostman.com/view/5693366/2sB2x5GXpc

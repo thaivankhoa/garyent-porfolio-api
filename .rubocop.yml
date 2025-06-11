@@ -13,6 +13,7 @@ AllCops:
     - 'vendor/**/*'
     - 'tmp/**/*'
     - 'node_modules/**/*'
+    - 'spec/**/*'
 
 Style/Documentation:
   Enabled: false

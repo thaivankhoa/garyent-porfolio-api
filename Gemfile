@@ -54,6 +54,15 @@ group :development, :test do
   gem 'byebug'
   gem 'debug', platforms: %i[mri windows]
   gem 'dotenv-rails'
+  
+  # Testing framework
+  gem 'rspec-rails'
+  gem 'factory_bot_rails'
+  gem 'faker'
+  gem 'shoulda-matchers'
+  gem 'database_cleaner-active_record'
+  gem 'webmock'
+  gem 'vcr'
 end
 
 group :development do

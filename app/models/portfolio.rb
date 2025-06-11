@@ -1,8 +1,11 @@
 class Portfolio < ApplicationRecord
   belongs_to :user
   has_many :portfolio_coins, dependent: :destroy
+  has_many :coins, through: :portfolio_coins
+  has_many :transactions, through: :portfolio_coins
 
-  validates :name, presence: true
+  validates :name, presence: true, length: { minimum: 2, maximum: 50 }
+  validates :user_id, presence: true
 
   def total_value
     portfolio_coins.sum(&:current_value)

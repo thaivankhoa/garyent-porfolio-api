@@ -3,6 +3,10 @@ class PortfolioCoin < ApplicationRecord
   belongs_to :coin
   has_many :transactions, dependent: :destroy
 
+  validates :portfolio_id, presence: true
+  validates :coin_id, presence: true, uniqueness: { scope: :portfolio_id, message: 'already exists in this portfolio' }
+  validate :validate_total_coins_limit
+
   def total_quantity
     transactions.inject(0) do |sum, transaction|
       if transaction.buy?
@@ -55,5 +59,12 @@ class PortfolioCoin < ApplicationRecord
 
     percentage = (difference / invested * 100).round(2)
     percentage.abs
+  end
+
+  def validate_total_coins_limit
+    return unless portfolio
+    return if portfolio.portfolio_coins.count < 100 || persisted?
+
+    errors.add(:base, 'Maximum number of coins (100) per portfolio reached')
   end
 end
