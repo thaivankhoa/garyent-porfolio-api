@@ -13,34 +13,39 @@ RSpec.describe Portfolio, type: :model do
 
   describe '#total_value' do
     let(:portfolio) { create(:portfolio) }
-    let(:coin1) { create(:coin, current_price: 45000.0) }
-    let(:coin2) { create(:coin, current_price: 2000.0) }
+    let(:coin1) { create(:coin, coingecko_id: 'bitcoin', current_price: 45000.0) }
+    let(:coin2) { create(:coin, coingecko_id: 'ethereum', current_price: 2000.0) }
+    let(:portfolio_coin1) { create(:portfolio_coin, portfolio: portfolio, coin: coin1) }
+    let(:portfolio_coin2) { create(:portfolio_coin, portfolio: portfolio, coin: coin2) }
     
     before do
-      create(:portfolio_coin, portfolio: portfolio, coin: coin1, quantity: 2.0)
-      create(:portfolio_coin, portfolio: portfolio, coin: coin2, quantity: 10.0)
+      create(:transaction, portfolio_coin: portfolio_coin1, transaction_type: 'buy', quantity: 2, price: 45000)
+      create(:transaction, portfolio_coin: portfolio_coin2, transaction_type: 'buy', quantity: 2, price: 2000)
     end
 
     it 'calculates the total value of all portfolio coins' do
-      expect(portfolio.total_value).to eq(110000.0) # (2 * 45000) + (10 * 2000)
+      expect(portfolio.total_value).to eq(94000.to_f) # 45000 * 2 + 2000 * 2
     end
   end
 
-  describe '#total_profit_loss' do
+  describe '#gain_or_loss' do
     let(:portfolio) { create(:portfolio) }
     let(:coin) { create(:coin, current_price: 45000.0) }
     let(:portfolio_coin) do
       create(:portfolio_coin,
              portfolio: portfolio,
              coin: coin,
-             quantity: 2.0,
-             average_buy_price: 40000.0)
+            )
     end
 
-    before { portfolio_coin }
+    before do
+      create(:transaction, portfolio_coin: portfolio_coin, transaction_type: 'buy', quantity: 1, price: 40000.0)
+    end
 
     it 'calculates the total profit/loss' do
-      expect(portfolio.total_profit_loss).to eq(10000.0) # 2 * (45000 - 40000)
+      expect(portfolio.gain_or_loss.dig(:amount)).to eq(5000.to_f)
+      expect(portfolio.gain_or_loss.dig(:is_gain)).to eq(true)
+      expect(portfolio.gain_or_loss.dig(:percentage)).to eq(12.5.to_f)
     end
   end
-end 
+end

@@ -5,33 +5,33 @@ RSpec.describe 'Portfolio Management', type: :request do
   let(:headers) { user.create_new_auth_token }
   let(:bitcoin) { create(:coin, :bitcoin) }
   let(:ethereum) { create(:coin, :ethereum) }
+  let(:market_service) { instance_double(Coingecko::MarketService) }
 
   before do
     bitcoin
     ethereum
-    allow(Coingecko::MarketService).to receive(:fetch_market_data).and_return([
+    allow(Coingecko::MarketService).to receive(:new).and_return(market_service)
+    allow(market_service).to receive(:sync_markets).and_return([
       {
         'id' => 'bitcoin',
         'symbol' => 'btc',
         'name' => 'Bitcoin',
-        'current_price' => 45000.0,
+        'current_price' => 105000.0,
         'market_cap' => 850000000000,
         'market_cap_rank' => 1,
         'total_volume' => 28000000000,
         'price_change_percentage_24h' => 2.5,
-        'sparkline_in_7d' => { 'price' => [44000.0, 44500.0, 45000.0] },
         'last_updated' => Time.current
       },
       {
         'id' => 'ethereum',
         'symbol' => 'eth',
         'name' => 'Ethereum',
-        'current_price' => 2000.0,
+        'current_price' => 2500.0,
         'market_cap' => 240000000000,
         'market_cap_rank' => 2,
         'total_volume' => 15000000000,
         'price_change_percentage_24h' => 1.8,
-        'sparkline_in_7d' => { 'price' => [1900.0, 1950.0, 2000.0] },
         'last_updated' => Time.current
       }
     ])
@@ -50,7 +50,7 @@ RSpec.describe 'Portfolio Management', type: :request do
         transaction_type: 'buy',
         quantity: 1.5,
         price: 40000.0,
-        executed_at: Time.current
+        transaction_date: Time.current
       }
     }, headers: headers
 
@@ -67,7 +67,7 @@ RSpec.describe 'Portfolio Management', type: :request do
         transaction_type: 'buy',
         quantity: 10.0,
         price: 1800.0,
-        executed_at: Time.current
+        transaction_date: Time.current
       }
     }, headers: headers
 
@@ -78,16 +78,16 @@ RSpec.describe 'Portfolio Management', type: :request do
     expect(response).to have_http_status(:ok)
     
     portfolio_data = json_response['data']
-    expect(portfolio_data['attributes']['total_value']).to eq(87500.0) # (1.5 * 45000) + (10 * 2000)
-    expect(portfolio_data['attributes']['total_profit_loss']).to eq(9500.0) # (1.5 * (45000 - 40000)) + (10 * (2000 - 1800))
+    expect(portfolio_data['attributes']['total_value']).to eq(182500.0) # (1.5 * 105000) + (10 * 2500)
+    expect(portfolio_data['attributes']['total_profit_loss']).to eq(104500.0) # (1.5 * (105000 - 40000)) + (10 * (2500 - 1800))
     
     # Add a sell transaction for Bitcoin
     post "/api/v1/portfolio_coins/#{btc_portfolio_coin.id}/transactions", params: {
       transaction: {
         transaction_type: 'sell',
         quantity: 0.5,
-        price: 45000.0,
-        executed_at: Time.current
+        price: 105000.0,
+        transaction_date: Time.current
       }
     }, headers: headers
 

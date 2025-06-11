@@ -1,10 +1,8 @@
 FactoryBot.define do
   factory :user do
     email { Faker::Internet.email }
-    password { 'password123' }
-    password_confirmation { 'password123' }
-    name { Faker::Name.name }
-    confirmed_at { Time.current }
+    password { '123456' }
+    password_confirmation { '123456' }
 
     trait :with_portfolio do
       after(:create) do |user|

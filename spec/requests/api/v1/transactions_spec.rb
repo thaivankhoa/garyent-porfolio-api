@@ -39,7 +39,7 @@ RSpec.describe 'API V1 Transactions', type: :request do
           transaction_type: 'buy',
           quantity: 1.5,
           price: 45000.0,
-          executed_at: Time.current
+          transaction_date: Time.current
         }
       }
     end
@@ -101,7 +101,7 @@ RSpec.describe 'API V1 Transactions', type: :request do
               transaction_type: 'sell',
               quantity: 2.0,
               price: 45000.0,
-              executed_at: Time.current
+              transaction_date: Time.current
             }
           }
         end

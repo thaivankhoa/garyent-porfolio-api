@@ -4,7 +4,7 @@ FactoryBot.define do
     transaction_type { %w[buy sell].sample }
     quantity { Faker::Number.decimal(l_digits: 2, r_digits: 8) }
     price { Faker::Number.decimal(l_digits: 4, r_digits: 2) }
-    executed_at { Time.current }
+    transaction_date { Time.current }
     
     trait :buy do
       transaction_type { 'buy' }
@@ -22,11 +22,11 @@ FactoryBot.define do
     end
 
     trait :recent do
-      executed_at { Time.current - 1.hour }
+      transaction_date { Time.current - 1.hour }
     end
 
     trait :old do
-      executed_at { Time.current - 1.month }
+      transaction_date { Time.current - 1.month }
     end
   end
 end 

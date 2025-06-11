@@ -49,7 +49,6 @@ RSpec.describe 'API V1 Portfolios', type: :request do
       {
         portfolio: {
           name: 'My Portfolio',
-          description: 'Investment portfolio'
         }
       }
     end
@@ -83,7 +82,6 @@ RSpec.describe 'API V1 Portfolios', type: :request do
       {
         portfolio: {
           name: 'Updated Portfolio',
-          description: 'Updated description'
         }
       }
     end
